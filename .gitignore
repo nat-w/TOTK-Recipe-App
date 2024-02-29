@@ -33,3 +33,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Copyrighted Image Files
+assets/Ingredients/*
+assets/Meals/*
