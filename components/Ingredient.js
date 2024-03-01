@@ -1,22 +1,25 @@
+const dbRecipeIngredientColumns = 'ingredient_1 + ingredient_2 + ingredient_3 + ingredient_4 + ingredient_5'
+const ingredientThumbnailPath = '../assets/Ingredients/'
+const thumbnailExtension = '.png'
+
 class Ingredient {
-    constructor(name, categoryList) {
+    constructor(name, categoryList, effect) {
       this.name = name;
       this.categoryList = categoryList.split(' and ');
-      this.thumbnailFile = ingredientThumbnailPath + this.name.lower().replace(' ', '_') + thumbnailExtension
+      this.effect = effect;
+      this.thumbnailFile = ingredientThumbnailPath + this.name.lower().replace(' ', '_') + thumbnailExtension;
     }
 
     makeSQLQueryForIngredient() {
         // SQL clause for ingredient by name
-        sqlSelect = 'SELECT id, name from ' + dbRecipeTableName
-        sqlWhereName = ' WHERE ((' + dbRecipeIngredientColumns +') LIKE \'%' + Ingredient.name + '%\')'
+        let sqlWhereName = 'WHERE ((' + dbRecipeIngredientColumns +') LIKE \'%' + Ingredient.name + '%\')';
 
         // SQL clause for ingredients categories
-        sqlWhereCategories
+        let sqlWhereCategories = ''
         for (category in this.categoryList) {
-            sqlWhereCategories += ' UNION'
-            sqlWhereCategories += ' WHERE ((' + dbRecipeIngredientColumns +') LIKE \'%' + category + '%\')'
+            sqlWhereCategories += ' UNION WHERE ((' + dbRecipeIngredientColumns +') LIKE \'%' + category + '%\')';
         }
 
-        return sqlSelect + sqlWhereName + sqlWhereCategories
+        return sqlSelect + sqlWhereName + sqlWhereCategories;
     }
 }
