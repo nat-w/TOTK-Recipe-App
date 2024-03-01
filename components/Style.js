@@ -1,3 +1,6 @@
+import React from 'react';
+import {StyleSheet} from 'react-native';
+
 export const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
@@ -13,7 +16,6 @@ export const styles = StyleSheet.create({
         padding: 20,
     },
     button: {
-        color: '66d83d',
         fontWeight: 'bold',
         fontSize: 30,
     },
