@@ -25,11 +25,12 @@ export const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
     item: {
-        backgroundColor: 'red',
-        aspectRatio: 1,
+        backgroundColor: 'grey',
+        height: 150,
+        width: 150,
     },
     thumbnail: {
-        aspectRatio: 1,
-        padding: 5,
+        width: 151,
+        height: 176,
     }
  })

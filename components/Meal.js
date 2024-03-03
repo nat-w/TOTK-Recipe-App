@@ -1,6 +1,3 @@
-const maxIngredients = 5
-const dbRecipeTableName = 'recipe'
-const dbRecipeIngredientColumns = ''
 const ingredientThumbnailPath = '../assets/Meals/'
 const thumbnailExtension = '.png'
 

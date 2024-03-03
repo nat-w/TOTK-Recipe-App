@@ -1,31 +1,26 @@
 import React from 'react';
-import {View, FlatList, Button} from 'react-native';
-import {styles} from './Style';
-import Ingredient from './Ingredient';
-import Meal from './Meal';
-import * as SQLite from "expo-sqlite";
+import {View, FlatList, Image, ImageBackground, Button, Text} from 'react-native';
+import {styles} from './Style.js';
+import Ingredient from './Ingredient.js';
+import Meal from './Meal.js';
+import SQLite from 'expo-sqlite';
+//const db = SQLite.openDatabase('../database/recipes.db');
 
-const maxIngredients = 5
-const dbName = ''
-const dbIngredientTableName = 'recipe'
-const dbRecipeTableName = 'recipe'
-const dbRecipeIngredientColumns = ''
-const UIImagePath = '../assets/UI/'
-const ingredientThumbnailPath = '../assets/Ingredients'
-const thumbnailExtension = '.png'
-
-function openDatabase() {
-    const db = SQLite.openDatabase(dbName);
-    return db;
-}
-
-const db = openDatabase();
+const selectedIngredients = [];
+const dbIngredientTableName = 'ingredients';
+const dbRecipeTableName = 'recipes';
 
 function findAllIngredients() {
     let query = 'SELECT name, category_list, effect from ' + dbIngredientTableName;
-    let ingredients = sendSQLQuery(query);
+    let sqlResults = sendSQLQuery(query);
     
-    return ingredients.foreach(x => new Ingredient(x['name'], x['category_list'], x['effect']));
+    let ingredientList = [];
+    for (row in sqlResults) {
+        ingredientList.add(new Ingredient(row['name'], row['category_list'], row['effect']));
+    }
+
+    console.log(ingredientList);
+    return ingredientList;
 }
 
 function findMeal(ingredientList) {
@@ -37,7 +32,6 @@ function findMeal(ingredientList) {
     }
 
     let query = sqlSelect + sqlWhere;
-
     let meals = sendSQLQuery(query);
 
     // No meals found => dubious food
@@ -67,31 +61,38 @@ function sendSQLQuery(query) {
     return data;
 }
 
-
-const IngredientItem = ({ingredient}) => (
-    <View style={styles.item}>
-        <Pressable onPress={() => {ingredient.selected = !ingredient.selected}}>
-            <ImageBackground source={{uri:UIImagePath + 'cell_filled.png'}} resizeMode="cover" style={styles.image}>
-                <Image style={styles.thumbnail} source={{uri: ingredient.thumbnailFile}} />
-                <Text style={styles.title}>{ingredient.name}</Text>
-            </ImageBackground>
-        </Pressable>
+const imgFile = '../assets/Ingredients/golden_apple.png';
+const IngredientItem = ({baseIngredient}) => (
+    <View>
+        <Image
+        style={styles.thumbnail}
+        source={baseIngredient.thumbnailFile}
+        />
+        <Text>{baseIngredient.name}</Text>
     </View>
   );
 
+  let apple = new Ingredient('apple', 'fruit', '', false);
+  let goldenApple = new Ingredient('golden apple', 'fruit', '', false);
+const DATA = [
+{
+    ing: apple,
+},
+{
+    ing: goldenApple,
+},
+];
+
 const Cook = () => {
   return (
-    <View style={styles.container}>
-        <FlatList
-            data={findAllIngredients()}
-            renderItem={({ingredient}) => <IngredientItem ingredient={ingredient} />}
-            keyExtractor={ingredient => ingredient.name}
-        />
-        <Button
-            title='Cook'
-            onPress={() => navigation.navigate('Cook')}
-            style={styles.button}
-        />
+    <View >
+        <View>
+            <FlatList
+                data={DATA}
+                renderItem={({item}) => <IngredientItem baseIngredient={item.ing} />}
+                keyExtractor={item => item.ing.name}
+            />
+        </View>
     </View>
   );
 };

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Home from './components/Home'
+import Cook from './components/Cook'
 
 const Stack = createNativeStackNavigator();
 
@@ -16,12 +18,7 @@ const App = () => {
         <Stack.Screen
           name='Cook'
           component={Cook}
-          options={{title: 'Welcome'}}
-        />
-        <Stack.Screen
-          name='Recipes'
-          component={Recipes}
-          options={{title: 'Welcome'}}
+          options={{title: 'Cook page'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
