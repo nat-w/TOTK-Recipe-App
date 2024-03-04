@@ -1,6 +1,5 @@
 const dbRecipeIngredientColumns = 'ingredient_1 || ingredient_2 || ingredient_3 || ingredient_4 || ingredient_5';
-const ingredientThumbnailPath = '../assets/Ingredients/';
-const thumbnailExtension = '.png';
+import icons from '../assets/iconIndex';
 
 export default class Ingredient {
     name;
@@ -13,7 +12,7 @@ export default class Ingredient {
         this.name = name;
         this.categoryList = categoryList;
         this.effect = effect;
-        this.thumbnailFile = require('../assets/Ingredients/' + 'apple' + '.png');
+        this.thumbnailFile = icons[this.name];
         this.selected = selected;
     }
 
