@@ -3,12 +3,28 @@ import {View, FlatList, Image, ImageBackground, Button, Text} from 'react-native
 import {styles} from './Style.js';
 import Ingredient from './Ingredient.js';
 import Meal from './Meal.js';
-import SQLite from 'expo-sqlite';
-//const db = SQLite.openDatabase('../database/recipes.db');
+import * as SQLite from 'expo-sqlite';
 
 const selectedIngredients = [];
 const dbIngredientTableName = 'ingredients';
 const dbRecipeTableName = 'recipes';
+
+export const getDBConnection = async () => {
+    return SQLite.openDatabase('recipes.db');
+}
+
+export const sendSQLQuery = async (query) => {
+    let data;
+    await db.transaction(async tx => {
+        await tx.executeSql(query, [], (tx, results) => {
+            if (results.rows.length > 0) {
+                data = results.rows;
+            }
+        });
+    });
+
+    return data;
+}
 
 function findAllIngredients() {
     let query = 'SELECT name, category_list, effect from ' + dbIngredientTableName;
@@ -16,7 +32,7 @@ function findAllIngredients() {
     
     let ingredientList = [];
     for (row in sqlResults) {
-        ingredientList.add(new Ingredient(row['name'], row['category_list'], row['effect']));
+        ingredientList.add({ingredient: new Ingredient(row['name'], row['category_list'], row['effect'])});
     }
 
     console.log(ingredientList);
@@ -24,7 +40,7 @@ function findAllIngredients() {
 }
 
 function findMeal(ingredientList) {
-    let sqlSelect = 'SELECT id, name from ' + dbRecipeTableName;
+    let sqlSelect = 'SELECT id, name, exclude from ' + dbRecipeTableName;
     let sqlWhere = '';
 
     for (ingredient in ingredientList) {
@@ -42,33 +58,19 @@ function findMeal(ingredientList) {
     else if (meals.length == 1) {
         return new Meal(meals[0].id, meals[0].name);
     }
-    // TODO Multiple meals found => return meal with most ingredients
+    // TODO Multiple meals found => return meal with unique ingredients
     else {
         return new Meal(meals[0].id, meals[0].name);
     }
 }
 
-function sendSQLQuery(query) {
-    let data;
-    db.transaction(tx => {
-        tx.executeSql(query, [], (tx, results) => {
-            if (results.rows.length > 0) {
-                data = results.rows;
-            }
-        });
-      });
-    
-    return data;
-}
-
-const imgFile = '../assets/Ingredients/golden_apple.png';
 const IngredientItem = ({baseIngredient}) => (
     <View>
         <Image
         style={styles.thumbnail}
-        source={baseIngredient.thumbnailFile}
+        source={baseIngredient.ingredient.thumbnailFile}
         />
-        <Text>{baseIngredient.name}</Text>
+        <Text>{baseIngredient.ingredient.name}</Text>
     </View>
   );
 
