@@ -6,13 +6,13 @@ export default class Ingredient {
     categoryList;
     effect;
     selected;
-    thumbnailFile;
+    thumbnail;
 
-    constructor (name, categoryList, effect, selected) {
+    constructor (name, categoryList, effect, selected=false) {
         this.name = name;
         this.categoryList = categoryList;
         this.effect = effect;
-        this.thumbnailFile = icons[this.name];
+        this.thumbnail = icons.ingredients[this.name];
         this.selected = selected;
     }
 

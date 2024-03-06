@@ -3,31 +3,15 @@ import {View, FlatList, Image, ImageBackground, Button, Text} from 'react-native
 import {styles} from './Style.js';
 import Ingredient from './Ingredient.js';
 import Meal from './Meal.js';
-import * as SQLite from 'expo-sqlite';
+import CustomButton from './CustomButton.js';
+import { sendSQLQuery } from '../database/GetDBData.js';
+import MealView from './MealView.js';
 
 const selectedIngredients = [];
-const dbIngredientTableName = 'ingredients';
-const dbRecipeTableName = 'recipes';
-
-export const getDBConnection = async () => {
-    return SQLite.openDatabase('recipes.db');
-}
-
-export const sendSQLQuery = async (query) => {
-    let data;
-    await db.transaction(async tx => {
-        await tx.executeSql(query, [], (tx, results) => {
-            if (results.rows.length > 0) {
-                data = results.rows;
-            }
-        });
-    });
-
-    return data;
-}
+let currentMeal;
 
 function findAllIngredients() {
-    let query = 'SELECT name, category_list, effect from ' + dbIngredientTableName;
+    let query = 'SELECT name, category_list, effect from ingredients;';
     let sqlResults = sendSQLQuery(query);
     
     let ingredientList = [];
@@ -35,12 +19,11 @@ function findAllIngredients() {
         ingredientList.add({ingredient: new Ingredient(row['name'], row['category_list'], row['effect'])});
     }
 
-    console.log(ingredientList);
     return ingredientList;
 }
 
 function findMeal(ingredientList) {
-    let sqlSelect = 'SELECT id, name, exclude from ' + dbRecipeTableName;
+    let sqlSelect = 'SELECT id, name, exclude from recipes;';
     let sqlWhere = '';
 
     for (ingredient in ingredientList) {
@@ -58,43 +41,43 @@ function findMeal(ingredientList) {
     else if (meals.length == 1) {
         return new Meal(meals[0].id, meals[0].name);
     }
-    // TODO Multiple meals found => return meal with unique ingredients
+    // TODO Multiple meals found => return meal with excluded or unique ingredients
     else {
+        let unique = false;
         return new Meal(meals[0].id, meals[0].name);
     }
 }
 
-const IngredientItem = ({baseIngredient}) => (
-    <View>
-        <Image
-        style={styles.thumbnail}
-        source={baseIngredient.ingredient.thumbnailFile}
-        />
-        <Text>{baseIngredient.ingredient.name}</Text>
-    </View>
-  );
+function onPressIngredient(ingredient) {
+    // Toggle ingredient select state
+    ingredient.selected = !ingredient.selected;
 
-  let apple = new Ingredient('apple', 'fruit', '', false);
-  let goldenApple = new Ingredient('golden apple', 'fruit', '', false);
-const DATA = [
-{
-    ing: apple,
-},
-{
-    ing: goldenApple,
-},
-];
+    if (ingredient.selected) {
+        ingredientList.push(ingredient);
+    }
+    else {
+        let index = ingredientList.indexOf(ingredient);
+        ingredientList.splice(index, 1);
+    }
+}
+
+function onPressCook() {
+    // Find matching meal
+    currentMeal = findMeal(selectedIngredients);
+
+    // Display meal at bottom
+}
 
 const Cook = () => {
   return (
     <View >
-        <View>
-            <FlatList
-                data={DATA}
-                renderItem={({item}) => <IngredientItem baseIngredient={item.ing} />}
-                keyExtractor={item => item.ing.name}
-            />
-        </View>
+        <FlatList
+            data={DATA}
+            renderItem={({item}) => <IngredientTile onPress={onPressIngredient} baseIngredient={item.ingredient} />}
+            keyExtractor={item => item.ingredient.name}
+        />
+        <CustomButton onPress={onPressCook} title={'Cook'}/>
+        <MealView meal={currentMeal}/>
     </View>
   );
 };

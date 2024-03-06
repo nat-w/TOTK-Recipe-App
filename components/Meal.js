@@ -1,10 +1,11 @@
-const ingredientThumbnailPath = '../assets/Meals/'
-const thumbnailExtension = '.png'
+export default class Meal {
+    id;
+    name;
+    thumbnail;
 
-class Meal {
-    constructor(id, name) {
-        this.id = id;
+    constructor (id, name) {
         this.name = name;
-        this.thumbnailFile = ingredientThumbnailPath + this.name.lower().replace(' ', '_') + thumbnailExtension;
+        this.effect = effect;
+        this.thumbnail = icons.meals[this.name];
     }
 }

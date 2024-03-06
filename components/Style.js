@@ -16,21 +16,28 @@ export const styles = StyleSheet.create({
         padding: 20,
     },
     button: {
+
+    },
+    buttonText: {
         fontWeight: 'bold',
         fontSize: 30,
     },
-    separator: {
-        marginVertical: 8,
-        borderBottomColor: '#737373',
-        borderBottomWidth: StyleSheet.hairlineWidth,
+    buttonImage: {
+        width: 200,
+        height: 100,
     },
     item: {
-        backgroundColor: 'grey',
-        height: 150,
-        width: 150,
+
     },
-    thumbnail: {
+    ingredientThumbnail: {
         width: 151,
         height: 176,
-    }
+    },
+    titleImage: {
+
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 30,
+    },
  })
